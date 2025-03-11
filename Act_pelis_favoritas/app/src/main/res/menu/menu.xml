@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/action_add"
+        android:icon="@drawable/_046041"
+        android:title="Agregar"
+        app:showAsAction="always" />
+
+    <item
+        android:id="@+id/action_weather"
+        android:icon="@drawable/_29023"
+        android:title="Clima"
+        app:showAsAction="always" />
+    <item
+        android:title="Filtrar"
+        app:showAsAction="always">
+        <menu>
+            <item android:title="A-Z" />
+            <item android:title="Z-A" />
+            <item android:title="Mejor puntuación" />
+            <item android:title="Peor puntuación" />
+        </menu>
+    </item>
+</menu>
+
