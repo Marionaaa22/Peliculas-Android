@@ -23,29 +23,26 @@ import androidx.appcompat.widget.Toolbar
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private lateinit var moviesAdapter: MoviesAdapter
-    private lateinit var moviesList: List<MovieElement>
     private val movieDbService = MovieDbConnection.movieDbService
+    private val moviesAdapter by lazy { MoviesAdapter(emptyList(), ::deleteFavoriteMovie, ::editScore) }
+    private var moviesList: List<MovieElement> = emptyList()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        setSupportActionBar(toolbar)
+        setSupportActionBar(findViewById<Toolbar>(R.id.toolbar))
+        setupRecyclerView()
+        getMovies()
+    }
 
-        moviesAdapter = MoviesAdapter(emptyList(), ::deleteFavoriteMovie, ::editScore)
+    private fun setupRecyclerView() {
         binding.recyclerViewMovies.apply {
-            adapter = moviesAdapter
-            layoutManager = LinearLayoutManager(this@MainActivity)
+            var adapter = moviesAdapter
+            var layoutManager = GridLayoutManager(this@MainActivity, 2)
             setHasFixedSize(true)
         }
-
-        val layoutManager = GridLayoutManager(this, 2)
-        binding.recyclerViewMovies.layoutManager = layoutManager
-
-        getMovies()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -56,23 +53,27 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_sort_title_asc -> {
-                sortMovies("title", "asc")
+                sortMovies("title", true)
                 true
             }
             R.id.action_sort_title_desc -> {
-                sortMovies("title", "desc")
+                sortMovies("title", false)
                 true
             }
             R.id.action_sort_rating_asc -> {
-                sortMovies("score", "asc")
+                sortMovies("score", true)
                 true
             }
             R.id.action_sort_rating_desc -> {
-                sortMovies("score", "desc")
+                sortMovies("score", false)
                 true
             }
             R.id.action_weather -> {
                 startActivity(Intent(this, WeatherActivity::class.java))
+                true
+            }
+            R.id.action_add -> {
+                showToast("Funcionalidad de agregar no implementada aún")
                 true
             }
             else -> super.onOptionsItemSelected(item)
@@ -81,42 +82,36 @@ class MainActivity : AppCompatActivity() {
 
     private fun getMovies() {
         CoroutineScope(Dispatchers.Main).launch {
-            val response = withContext(Dispatchers.IO) {
-                movieDbService.getMovies()
-            }
-            if (response.isSuccessful) {
-                val movies = response.body()
-                if (movies != null) {
-                    moviesList = movies
+            runCatching {
+                withContext(Dispatchers.IO) { movieDbService.getMovies() }
+            }.onSuccess { response ->
+                response.body()?.let {
+                    moviesList = it
                     moviesAdapter.updateData(moviesList)
-                } else {
-                    Toast.makeText(this@MainActivity, "La lista de películas es nula", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                Toast.makeText(this@MainActivity, "Error al obtener la lista de películas", Toast.LENGTH_SHORT).show()
+                } ?: showToast("La lista de películas es nula")
+            }.onFailure {
+                showToast("Error al obtener la lista de películas")
             }
         }
     }
 
-    private fun sortMovies(sortBy: String, order: String) {
+    private fun sortMovies(sortBy: String, ascending: Boolean) {
         CoroutineScope(Dispatchers.Main).launch {
-            val response = withContext(Dispatchers.IO) {
-                when (sortBy) {
-                    "title" -> if (order == "asc") movieDbService.listMoviesByTitleAsc() else movieDbService.listMoviesByTitleDesc()
-                    "score" -> if (order == "asc") movieDbService.listMoviesByScoreAsc() else movieDbService.listMoviesByScoreDesc()
-                    else -> throw IllegalArgumentException("Ordenación no válida: $sortBy")
+            runCatching {
+                withContext(Dispatchers.IO) {
+                    when (sortBy) {
+                        "title" -> if (ascending) movieDbService.listMoviesByTitleAsc() else movieDbService.listMoviesByTitleDesc()
+                        "score" -> if (ascending) movieDbService.listMoviesByScoreAsc() else movieDbService.listMoviesByScoreDesc()
+                        else -> throw IllegalArgumentException("Ordenación no válida")
+                    }
                 }
-            }
-            if (response.isSuccessful) {
-                val sortedMovies = response.body()
-                if (sortedMovies != null) {
-                    moviesList = sortedMovies
+            }.onSuccess { response ->
+                response.body()?.let {
+                    moviesList = it
                     moviesAdapter.updateData(moviesList)
-                } else {
-                    Toast.makeText(this@MainActivity, "La lista de películas ordenada es nula", Toast.LENGTH_SHORT).show()
-                }
-            } else {
-                Toast.makeText(this@MainActivity, "Error al obtener la lista de películas ordenada", Toast.LENGTH_SHORT).show()
+                } ?: showToast("La lista de películas ordenada es nula")
+            }.onFailure {
+                showToast("Error al obtener la lista de películas ordenada")
             }
         }
     }
@@ -126,48 +121,47 @@ class MainActivity : AppCompatActivity() {
             .setMessage("¿Estás seguro de que deseas eliminar esta película?")
             .setPositiveButton("Sí") { dialog, _ ->
                 CoroutineScope(Dispatchers.Main).launch {
-                    movieDbService.deleteFavoriteMovie(movieId)
-                    getMovies()
+                    runCatching { movieDbService.deleteFavoriteMovie(movieId) }
+                        .onSuccess { getMovies() }
+                        .onFailure { showToast("Error al eliminar la película") }
                 }
                 dialog.dismiss()
             }
-            .setNegativeButton("Cancelar") { dialog, _ ->
-                dialog.dismiss()
-            }
+            .setNegativeButton("Cancelar") { dialog, _ -> dialog.dismiss() }
             .show()
     }
 
     private fun editScore(movie: MovieElement) {
-        val builder = AlertDialog.Builder(this)
-        val editTextScore = EditText(this)
-        editTextScore.inputType = InputType.TYPE_CLASS_NUMBER
-        editTextScore.filters = arrayOf(InputFilter.LengthFilter(2))
+        val editTextScore = EditText(this).apply {
+            inputType = InputType.TYPE_CLASS_NUMBER
+            filters = arrayOf(InputFilter.LengthFilter(2))
+        }
 
-        builder.setView(editTextScore)
-            .setMessage("Modificar puntuació de la pelicula:")
+        AlertDialog.Builder(this)
+            .setView(editTextScore)
+            .setMessage("Modificar puntuación de la película:")
             .setPositiveButton("OK") { dialog, _ ->
-                val scoreText = editTextScore.text.toString()
-                val score = scoreText.toIntOrNull()
-
-                if (score != null && score in 1..10) {
+                val score = editTextScore.text.toString().toIntOrNull()
+                if (score in 1..10) {
                     CoroutineScope(Dispatchers.Main).launch {
-                        val updatedMovie = movie.copy(myScore = score)
-                        val response = withContext(Dispatchers.IO) {
-                            movieDbService.updateScore(movie.id, updatedMovie)
-                        }
-                        if (response.isSuccessful) {
+                        runCatching {
+                            withContext(Dispatchers.IO) { movieDbService.updateScore(movie.id, movie.copy(myScore = score)) }
+                        }.onSuccess {
                             getMovies()
-                        } else {
-                            Toast.makeText(this@MainActivity, "Error al actualizar la puntuació", Toast.LENGTH_SHORT).show()
+                        }.onFailure {
+                            showToast("Error al actualizar la puntuación")
                         }
                     }
                 } else {
-                    Toast.makeText(this, "La puntuació ha de ser un número entre 1 i 10", Toast.LENGTH_SHORT).show()
+                    showToast("La puntuación debe ser un número entre 1 y 10")
                 }
-            }
-            .setNegativeButton("Cancelar") { dialog, _ ->
                 dialog.dismiss()
             }
+            .setNegativeButton("Cancelar") { dialog, _ -> dialog.dismiss() }
             .show()
+    }
+
+    private fun showToast(message: String) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
     }
 }

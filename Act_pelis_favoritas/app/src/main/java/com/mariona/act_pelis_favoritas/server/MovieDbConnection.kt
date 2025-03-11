@@ -10,7 +10,7 @@ import java.util.concurrent.TimeUnit
 object MovieDbConnection {
 
     private val BASE_URL = "http://10.0.2.2:3000/"
-    private val API_KEY = "f179e9790366408adb94d347b99b4371" // Tu API key de MovieDB
+    private val API_KEY = "f179e9790366408adb94d347b99b4371"
 
     private val okHttpClient = HttpLoggingInterceptor().run {
         level = HttpLoggingInterceptor.Level.BODY

@@ -17,10 +17,18 @@
         android:title="Filtrar"
         app:showAsAction="always">
         <menu>
-            <item android:title="A-Z" />
-            <item android:title="Z-A" />
-            <item android:title="Mejor puntuación" />
-            <item android:title="Peor puntuación" />
+            <item
+                android:id="@+id/action_sort_title_asc"
+                android:title="A-Z" />
+            <item
+                android:id="@+id/action_sort_title_desc"
+                android:title="Z-A" />
+            <item
+                android:id="@+id/action_sort_rating_asc"
+                android:title="Mejor puntuación" />
+            <item
+                android:id="@+id/action_sort_rating_desc"
+                android:title="Peor puntuación" />
         </menu>
     </item>
 </menu>
