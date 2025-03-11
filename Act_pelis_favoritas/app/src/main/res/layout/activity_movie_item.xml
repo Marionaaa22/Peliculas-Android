@@ -30,35 +30,35 @@
 
         <TextView
             android:id="@+id/year"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="192dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             tools:text="2024" />
 
         <ImageView
             android:id="@+id/editScore"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="33dp"
+            android:layout_height="30dp"
             android:layout_marginTop="8dp"
-            android:src="@drawable/ic_score" />
+            android:src="@drawable/_4948" />
 
         <TextView
             android:id="@+id/rating"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
+            android:layout_width="60dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             tools:text="8.5" />
 
 
         <ImageView
             android:id="@+id/delete"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="32dp"
+            android:layout_height="38dp"
             android:layout_gravity="bottom|end"
             android:layout_margin="4dp"
-            android:background="#E15A5A"
+            android:background="#00FFFFFF"
             app:tint="@color/black"
-            tools:srcCompat="@drawable/ic_delete" />
+            tools:srcCompat="@drawable/_214594" />
 
     </LinearLayout>
 
