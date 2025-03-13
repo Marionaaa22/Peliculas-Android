@@ -6,7 +6,7 @@ import android.widget.Button
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import com.mariona.act_pelis_favoritas.databinding.ActivityWeatherBinding
-import com.mariona.act_pelis_favoritas.model.Temps
+import com.mariona.act_pelis_favoritas.models.Temps
 import com.bumptech.glide.Glide
 
 class WeatherActivity : AppCompatActivity() {

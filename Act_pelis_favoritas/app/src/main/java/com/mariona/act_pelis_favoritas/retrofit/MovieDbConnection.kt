@@ -1,10 +1,10 @@
-package com.mariona.act_pelis_favoritas.server
+package com.mariona.act_pelis_favoritas.retrofit
 
-import okhttp3.Interceptor
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.create
 import java.util.concurrent.TimeUnit
 
 object MovieDbConnection {
@@ -20,11 +20,11 @@ object MovieDbConnection {
 
     }
 
-    private val retrofit = Retrofit.Builder()
+    private val builder = Retrofit.Builder()
         .baseUrl(BASE_URL)
         .client(okHttpClient)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    val movieDbService = retrofit.create(MovieDbEndPoints::class.java)
+    val service: MovieDbEndPoints = builder.create()
 }

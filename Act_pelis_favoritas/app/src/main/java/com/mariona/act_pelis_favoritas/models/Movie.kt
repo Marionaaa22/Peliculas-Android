@@ -1,18 +1,11 @@
-package com.mariona.act_pelis_favoritas.model
+package com.mariona.act_pelis_favoritas.models
 
+import com.google.android.material.color.utilities.Score
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
 data class Movie (
-    val movies: List<MovieElement>,
-    val conf: List<Conf>
-): Serializable
 
-data class Conf (
-    val city: String
-) : Serializable
-
-data class MovieElement(
     val adult: Boolean,
 
     @SerializedName("backdrop_path")
@@ -28,7 +21,7 @@ data class MovieElement(
     @SerializedName("original_language")
     val originalLanguage: String,
 
-    @SerializedName("original_title")
+    @SerializedName("originat_title")
     val originalTitle: String,
 
     val overview: String,
@@ -50,6 +43,10 @@ data class MovieElement(
     val voteCount: Long,
 
     @SerializedName("my_score")
-    val myScore: Int
+    val myScore: Long,
 
 ): Serializable
+
+data class Conf (
+    val city: String
+)

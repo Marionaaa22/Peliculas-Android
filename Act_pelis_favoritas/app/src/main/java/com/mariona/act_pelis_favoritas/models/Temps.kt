@@ -1,4 +1,4 @@
-package com.mariona.act_pelis_favoritas.model
+package com.mariona.act_pelis_favoritas.models
 
 import java.io.Serializable
 import com.google.gson.annotations.SerializedName

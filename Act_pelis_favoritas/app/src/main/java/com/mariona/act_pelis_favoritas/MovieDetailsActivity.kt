@@ -1,17 +1,43 @@
 package com.mariona.act_pelis_favoritas
 
 
+import android.app.Activity
 import android.os.Bundle
+import com.mariona.act_pelis_favoritas.databinding.ActivityMovieDetailsBinding
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
-import com.mariona.act_pelis_favoritas.databinding.MovieDetailsBinding
+import com.mariona.act_pelis_favoritas.models.Movie
 
 class MovieDetailsActivity : AppCompatActivity() {
-    private lateinit var binding: MovieDetailsBinding
+    private lateinit var binding: ActivityMovieDetailsBinding
+    private lateinit var movie: Movie
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = MovieDetailsBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+        enableEdgeToEdge()
+        binding = ActivityMovieDetailsBinding.inflate(layoutInflater)
+        supportActionBar!!.hide()
+        val view: binding.root
+        setContentView(view)
+
+        movie = intent.getSerializableExtra("movie") as Movie
+        binding.titleTextView.text = "Title: ${movie.title}"
+        binding.originalTitleTextView.text = "Original Title: ${movie.originalTitle}"
+        binding.originalLanguageTextView.text = "Original Language: ${movie.originalLanguage}"
+        binding.idTextView.text = "ID: ${movie.id}"
+        binding.overviewTextView.text = "Overview: ${movie.overview}"
+        binding.popularityTextView.text = "Popularity: ${movie.popularity}"
+        binding.releaseDateTextView.text = "Release Date: ${movie.releaseDate}"
+        binding.voteAverageTextView.text = "Vote Average: ${movie.voteAverage}"
+        binding.voteCountTextView.text = "Vote Count: ${movie.voteCount}"
+        binding.myScoreTextView.text = "My Score: ${movie.myScore}"
+        binding.adultTextView.text = "Adult: ${if (movie.adult) "Yes" else "No"}"
+        binding.backButton.setOnClickListener {
+            finish()
+        }
+
+
+
 
         val titulo = intent.getStringExtra("titulo")
         val tituloOriginal = intent.getStringExtra("tituloOriginal")

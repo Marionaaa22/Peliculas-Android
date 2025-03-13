@@ -13,8 +13,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.GridLayoutManager
 import com.mariona.act_pelis_favoritas.databinding.ActivityMainBinding
-import com.mariona.act_pelis_favoritas.model.MovieElement
-import com.mariona.act_pelis_favoritas.server.MovieDbConnection
+import com.mariona.act_pelis_favoritas.models.MovieElement
+import com.mariona.act_pelis_favoritas.retrofit.MovieDbConnection
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
