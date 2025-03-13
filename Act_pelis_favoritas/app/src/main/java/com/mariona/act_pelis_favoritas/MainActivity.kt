@@ -2,45 +2,44 @@ package com.mariona.act_pelis_favoritas
 
 import android.content.Intent
 import android.os.Bundle
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
-import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
-import com.mariona.act_pelis_favoritas.databinding.ActivityMainBinding
-import com.mariona.act_pelis_favoritas.model.MovieElement
-import com.mariona.act_pelis_favoritas.server.MovieDbConnection
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
-import android.widget.EditText
 import android.text.InputFilter
 import android.text.InputType
 import android.view.Menu
 import android.view.MenuItem
-import androidx.appcompat.widget.Toolbar
+import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.GridLayoutManager
+import com.mariona.act_pelis_favoritas.databinding.ActivityMainBinding
+import com.mariona.act_pelis_favoritas.model.MovieElement
+import com.mariona.act_pelis_favoritas.server.MovieDbConnection
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val movieDbService = MovieDbConnection.movieDbService
-    private val moviesAdapter by lazy { MoviesAdapter(emptyList(), ::deleteFavoriteMovie, ::editScore) }
+    private lateinit var moviesAdapter: MoviesAdapter
     private var moviesList: List<MovieElement> = emptyList()
+    private val movieDbService = MovieDbConnection.movieDbService
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        setSupportActionBar(findViewById<Toolbar>(R.id.toolbar))
+        setSupportActionBar(findViewById(R.id.toolbar))
         setupRecyclerView()
         getMovies()
     }
 
     private fun setupRecyclerView() {
+        moviesAdapter = MoviesAdapter(emptyList(), ::deleteFavoriteMovie, ::editScore)
         binding.recyclerViewMovies.apply {
-            var adapter = moviesAdapter
-            var layoutManager = GridLayoutManager(this@MainActivity, 2)
+            adapter = moviesAdapter
+            layoutManager = GridLayoutManager(this@MainActivity, 2)
             setHasFixedSize(true)
         }
     }
@@ -53,19 +52,19 @@ class MainActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.itemId) {
             R.id.action_sort_title_asc -> {
-                sortMovies("title", true)
+                sortMovies("title", "asc")
                 true
             }
             R.id.action_sort_title_desc -> {
-                sortMovies("title", false)
+                sortMovies("title", "desc")
                 true
             }
             R.id.action_sort_rating_asc -> {
-                sortMovies("score", true)
+                sortMovies("score", "asc")
                 true
             }
             R.id.action_sort_rating_desc -> {
-                sortMovies("score", false)
+                sortMovies("score", "desc")
                 true
             }
             R.id.action_weather -> {
@@ -81,37 +80,43 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun getMovies() {
-        CoroutineScope(Dispatchers.Main).launch {
-            runCatching {
-                withContext(Dispatchers.IO) { movieDbService.getMovies() }
-            }.onSuccess { response ->
-                response.body()?.let {
-                    moviesList = it
-                    moviesAdapter.updateData(moviesList)
-                } ?: showToast("La lista de películas es nula")
-            }.onFailure {
-                showToast("Error al obtener la lista de películas")
+        lifecycleScope.launch {
+            try {
+                val response = withContext(Dispatchers.IO) { movieDbService.getMovies() }
+                if (response.isSuccessful) {
+                    response.body()?.let {
+                        moviesList = it
+                        moviesAdapter.updateData(moviesList)
+                    } ?: showToast("La lista de películas es nula")
+                } else {
+                    showToast("Error al obtener la lista de películas")
+                }
+            } catch (e: Exception) {
+                showToast("Error de conexión al obtener películas")
             }
         }
     }
 
-    private fun sortMovies(sortBy: String, ascending: Boolean) {
-        CoroutineScope(Dispatchers.Main).launch {
-            runCatching {
-                withContext(Dispatchers.IO) {
+    private fun sortMovies(sortBy: String, order: String) {
+        lifecycleScope.launch {
+            try {
+                val response = withContext(Dispatchers.IO) {
                     when (sortBy) {
-                        "title" -> if (ascending) movieDbService.listMoviesByTitleAsc() else movieDbService.listMoviesByTitleDesc()
-                        "score" -> if (ascending) movieDbService.listMoviesByScoreAsc() else movieDbService.listMoviesByScoreDesc()
-                        else -> throw IllegalArgumentException("Ordenación no válida")
+                        "title" -> if (order == "asc") movieDbService.listMoviesByTitleAsc() else movieDbService.listMoviesByTitleDesc()
+                        "score" -> if (order == "asc") movieDbService.listMoviesByScoreAsc() else movieDbService.listMoviesByScoreDesc()
+                        else -> null
                     }
                 }
-            }.onSuccess { response ->
-                response.body()?.let {
-                    moviesList = it
-                    moviesAdapter.updateData(moviesList)
-                } ?: showToast("La lista de películas ordenada es nula")
-            }.onFailure {
-                showToast("Error al obtener la lista de películas ordenada")
+                if (response?.isSuccessful == true) {
+                    response.body()?.let {
+                        moviesList = it
+                        moviesAdapter.updateData(moviesList)
+                    } ?: showToast("Error al ordenar películas")
+                } else {
+                    showToast("Error al ordenar películas")
+                }
+            } catch (e: Exception) {
+                showToast("Error de conexión al ordenar películas")
             }
         }
     }
@@ -120,10 +125,13 @@ class MainActivity : AppCompatActivity() {
         AlertDialog.Builder(this)
             .setMessage("¿Estás seguro de que deseas eliminar esta película?")
             .setPositiveButton("Sí") { dialog, _ ->
-                CoroutineScope(Dispatchers.Main).launch {
-                    runCatching { movieDbService.deleteFavoriteMovie(movieId) }
-                        .onSuccess { getMovies() }
-                        .onFailure { showToast("Error al eliminar la película") }
+                lifecycleScope.launch {
+                    try {
+                        movieDbService.deleteFavoriteMovie(movieId)
+                        getMovies()
+                    } catch (e: Exception) {
+                        showToast("Error al eliminar la película")
+                    }
                 }
                 dialog.dismiss()
             }
@@ -141,15 +149,21 @@ class MainActivity : AppCompatActivity() {
             .setView(editTextScore)
             .setMessage("Modificar puntuación de la película:")
             .setPositiveButton("OK") { dialog, _ ->
-                val score = editTextScore.text.toString().toIntOrNull()
-                if (score in 1..10) {
-                    CoroutineScope(Dispatchers.Main).launch {
-                        runCatching {
-                            withContext(Dispatchers.IO) { movieDbService.updateScore(movie.id, movie.copy(myScore = score)) }
-                        }.onSuccess {
-                            getMovies()
-                        }.onFailure {
-                            showToast("Error al actualizar la puntuación")
+                val score = editTextScore.text?.trim()?.toIntOrNull()
+                if (score != null && score in 1..10) {
+                    lifecycleScope.launch {
+                        try {
+                            val updatedMovie = movie.copy(myScore = score)
+                            val response = withContext(Dispatchers.IO) {
+                                movieDbService.updateScore(movie.id, updatedMovie)
+                            }
+                            if (response.isSuccessful) {
+                                getMovies()
+                            } else {
+                                showToast("Error al actualizar la puntuación")
+                            }
+                        } catch (e: Exception) {
+                            showToast("Error de conexión al actualizar la puntuación")
                         }
                     }
                 } else {

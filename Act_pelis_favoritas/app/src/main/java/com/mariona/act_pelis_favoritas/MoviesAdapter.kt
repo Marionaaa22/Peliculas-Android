@@ -8,13 +8,14 @@ import kotlin.reflect.KFunction1
 
 class MoviesAdapter(
     private var movies: List<MovieElement>,
-    private val deleteListener: KFunction1<Long, Unit>,
-    private val editScoreListener: KFunction1<MovieElement, Unit>
+    private val deleteListener: (Long) -> Unit,
+    private val editScoreListener: (MovieElement) -> Unit
 ) : RecyclerView.Adapter<MoviesAdapter.MovieViewHolder>() {
 
     fun updateData(newMovies: List<MovieElement>) {
+        val oldSize = movies.size
         movies = newMovies
-        notifyDataSetChanged()
+        notifyItemRangeChanged(0, oldSize.coerceAtMost(newMovies.size))
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MovieViewHolder {
@@ -24,61 +25,57 @@ class MoviesAdapter(
     }
 
     override fun onBindViewHolder(holder: MovieViewHolder, position: Int) {
-        val movie = movies[position]
-        holder.bind(movie)
+        holder.bind(movies[position])
     }
 
-    override fun getItemCount(): Int {
-        return movies.size
-    }
+    override fun getItemCount(): Int = movies.size
 
     inner class MovieViewHolder(private val binding: MovieItemBinding) :
         RecyclerView.ViewHolder(binding.root) {
 
-        init {
-            binding.delete.setOnClickListener {
-                val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    val movieId = movies[position].id
-                    deleteListener(movieId)
-                }
-            }
-            binding.editScore.setOnClickListener {
-                val position = adapterPosition
-                if (position != RecyclerView.NO_POSITION) {
-                    val movie = movies[position]
-                    editScoreListener(movie)
-                }
-            }
-        }
-
         fun bind(movie: MovieElement) {
             binding.apply {
                 title.text = movie.title
-                year.text = movie.releaseDate?.take(4) ?: "Año desc."
+                year.text = movie.releaseDate?.take(4) ?: "N/A"
                 rating.text = movie.myScore.toString()
+
                 Glide.with(root.context)
                     .load(movie.posterPath)
                     .into(thumb)
+
                 delete.setImageResource(R.drawable.ic_delete)
                 editScore.setImageResource(R.drawable.ic_score)
+
+                delete.setOnClickListener {
+                    if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                        deleteListener(movie.id)
+                    }
+                }
+                editScore.setOnClickListener {
+                    if (bindingAdapterPosition != RecyclerView.NO_POSITION) {
+                        editScoreListener(movie)
+                    }
+                }
             }
 
             itemView.setOnClickListener {
-                val intent = Intent(itemView.context, MovieDetailsActivity::class.java)
-                intent.putExtra("titulo", movie.title)
-                intent.putExtra("tituloOriginal", movie.originalTitle)
-                intent.putExtra("lenguajeOriginal", movie.originalLanguage)
-                intent.putExtra("id", movie.id)
-                intent.putExtra("adulto", movie.adult)
-                intent.putExtra("descripcion", movie.overview)
-                intent.putExtra("popularidad", movie.popularity)
-                intent.putExtra("fecha", movie.releaseDate)
-                intent.putExtra("votacion", movie.voteAverage)
-                intent.putExtra("numVotacion", movie.voteCount)
-                intent.putExtra("puntuacion", movie.myScore)
+                val intent = Intent(itemView.context, MovieDetailsActivity::class.java).apply {
+                    putExtra("titulo", movie.title)
+                    putExtra("tituloOriginal", movie.originalTitle)
+                    putExtra("lenguajeOriginal", movie.originalLanguage)
+                    putExtra("id", movie.id)
+                    putExtra("adulto", movie.adult)
+                    putExtra("descripcion", movie.overview)
+                    putExtra("popularidad", movie.popularity)
+                    putExtra("fecha", movie.releaseDate)
+                    putExtra("votacion", movie.voteAverage)
+                    putExtra("numVotacion", movie.voteCount)
+                    putExtra("puntuacion", movie.myScore)
+                }
                 itemView.context.startActivity(intent)
             }
         }
+    }
+}
     }
 }
