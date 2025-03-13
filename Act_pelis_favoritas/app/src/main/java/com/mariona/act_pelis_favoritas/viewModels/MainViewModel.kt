@@ -1,6 +1,7 @@
 package com.mariona.act_pelis_favoritas.viewModels
 
 import android.content.Context
+import android.content.Intent
 import android.text.InputType
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
@@ -41,14 +42,15 @@ class MainViewModel : ViewModel() {
 
             try {
                 lateinit var resposta: Response<List<Movie>>
+
                 if (titleASC) {
-                    resposta = MovieDbConnection.movieDbService.listMovies("title", "asc")
+                    resposta = MovieDbConnection.service.listMovies("title", "asc")
                 } else if (titleDESC) {
-                    resposta = MovieDbConnection.movieDbService.listMovies("title", "desc")
+                    resposta = MovieDbConnection.service.listMovies("title", "desc")
                 } else if (myscoreASC) {
-                    resposta = MovieDbConnection.movieDbService.listMovies("my_score", "asc")
+                    resposta = MovieDbConnection.service.listMovies("my_score", "asc")
                 } else if (myscoreDESC) {
-                    resposta = MovieDbConnection.movieDbService.listMovies("my_score", "desc")
+                    resposta = MovieDbConnection.service.listMovies("my_score", "desc")
                 }
 
                 if (resposta.isSuccessful) {
@@ -86,7 +88,7 @@ class MainViewModel : ViewModel() {
         dialog.setMessage("Escribe la nueva puntuación")
         dialog.setView(input)
         dialog.setPositiveButton("Aceptar") { _, _ ->
-            val points = input.text.toString().toLong()
+            var points = input.text.toString().toLong()
             movie.myScore = points
             if(points.toInt() in 1..10){
                 viewModelScope.launch {
