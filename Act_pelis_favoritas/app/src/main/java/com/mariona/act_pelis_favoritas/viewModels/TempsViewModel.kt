@@ -1,4 +1,4 @@
-package com.mariona.act_pelis_favoritas
+package com.mariona.act_pelis_favoritas.viewModels
 
 import android.util.Log
 import androidx.lifecycle.*

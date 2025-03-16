@@ -1,11 +1,12 @@
 package com.mariona.act_pelis_favoritas
 
-
-import android.app.Activity
 import android.os.Bundle
-import com.mariona.act_pelis_favoritas.databinding.ActivityMovieDetailsBinding
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.swiperefreshlayout.widget.CircularProgressDrawable
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.RequestOptions
+import com.mariona.act_pelis_favoritas.databinding.ActivityMovieDetailsBinding
 import com.mariona.act_pelis_favoritas.models.Movie
 
 class MovieDetailsActivity : AppCompatActivity() {
@@ -15,53 +16,45 @@ class MovieDetailsActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        binding = ActivityMovieDetailsBinding.inflate(layoutInflater)
-        supportActionBar!!.hide()
-        val view: binding.root
-        setContentView(view)
 
-        movie = intent.getSerializableExtra("movie") as Movie
-        binding.titleTextView.text = "Title: ${movie.title}"
-        binding.originalTitleTextView.text = "Original Title: ${movie.originalTitle}"
-        binding.originalLanguageTextView.text = "Original Language: ${movie.originalLanguage}"
-        binding.idTextView.text = "ID: ${movie.id}"
-        binding.overviewTextView.text = "Overview: ${movie.overview}"
-        binding.popularityTextView.text = "Popularity: ${movie.popularity}"
-        binding.releaseDateTextView.text = "Release Date: ${movie.releaseDate}"
-        binding.voteAverageTextView.text = "Vote Average: ${movie.voteAverage}"
-        binding.voteCountTextView.text = "Vote Count: ${movie.voteCount}"
-        binding.myScoreTextView.text = "My Score: ${movie.myScore}"
-        binding.adultTextView.text = "Adult: ${if (movie.adult) "Yes" else "No"}"
-        binding.backButton.setOnClickListener {
-            finish()
+        binding = ActivityMovieDetailsBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        supportActionBar?.hide() // Evita error si la barra de acción es null
+
+        movie = intent.getSerializableExtra("movie") as? Movie ?: return // Manejo seguro
+
+        binding.movieAdult.text = "Adult: ${movie.adult}"
+        binding.movieFavorite.text = "Favorite: ${movie.favorite}"
+        binding.movieGenere.text = "Genre: "
+
+        movie.genreIDS.forEach { genreId ->
+            binding.movieGenereIds.append("$genreId, ") // Agrega los géneros correctamente
         }
 
+        binding.movieOriginalLanguage.text = "Original Language: ${movie.originalLanguage}"
+        binding.movieTitle.text = "Original Title: ${movie.originalTitle}"
+        binding.movieOverview.text = "Overview: ${movie.overview}"
+        binding.moviePopularity.text = "Popularity: ${movie.popularity}"
+        binding.movieYear.text = "Release Date: ${movie.releaseDate}"
+        binding.movieVoteAverage.text = "Vote Average: ${movie.voteAverage}"
+        binding.movieVoteCount.text = "Vote Count: ${movie.voteCount}"
+        binding.moviePoints.text = "My Score: ${movie.myScore}"
 
+        val circularProgressDrawable = CircularProgressDrawable(this).apply {
+            strokeWidth = 5f
+            centerRadius = 30f
+            start()
+        }
 
+        val requestOption = RequestOptions()
+            .circleCrop()
+            .placeholder(circularProgressDrawable)
 
-        val titulo = intent.getStringExtra("titulo")
-        val tituloOriginal = intent.getStringExtra("tituloOriginal")
-        val lenguajeOriginal = intent.getStringExtra("lenguajeOriginal")
-        val adulto = intent.getBooleanExtra("adulto", false)
-        val id = intent.getLongExtra("id", 0L)
-        val descripcion = intent.getStringExtra("descripcion")
-        val popularidad = intent.getDoubleExtra("popularidad", 0.0)
-        val fecha = intent.getStringExtra("fecha")
-        val votos = intent.getDoubleExtra("votacion", 0.0)
-        val numVotos = intent.getLongExtra("numVotacion", 0L)
-        val puntuacion = intent.getIntExtra("puntuacion", 0)
-
-        binding.titleTextView.text = "Title: $titulo"
-        binding.originalTitleTextView.text = "Original Title: $tituloOriginal"
-        binding.originalLanguageTextView.text = "Original Language: $lenguajeOriginal"
-        binding.idTextView.text = "ID: $id"
-        binding.overviewTextView.text = "Overview: $descripcion"
-        binding.popularityTextView.text = "Popularity: $popularidad"
-        binding.releaseDateTextView.text = "Release Date: $fecha"
-        binding.voteAverageTextView.text = "Vote Average: $votos"
-        binding.voteCountTextView.text = "Vote Count: $numVotos"
-        binding.myScoreTextView.text = "My Score: $puntuacion"
-        binding.adultTextView.text = "Adult: ${if (adulto) "Yes" else "No"}"
+        Glide.with(this)
+            .load(movie.posterPath)
+            .apply(requestOption)
+            .into(binding.movieImage)
 
         binding.backButton.setOnClickListener {
             finish()

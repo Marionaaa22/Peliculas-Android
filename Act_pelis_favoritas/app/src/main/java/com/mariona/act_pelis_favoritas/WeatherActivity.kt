@@ -8,6 +8,8 @@ import androidx.appcompat.app.AppCompatActivity
 import com.mariona.act_pelis_favoritas.databinding.ActivityWeatherBinding
 import com.mariona.act_pelis_favoritas.models.Temps
 import com.bumptech.glide.Glide
+import com.mariona.act_pelis_favoritas.viewModels.TempsViewModel
+import com.mariona.act_pelis_favoritas.viewModels.TempsViewModelFactory
 
 class WeatherActivity : AppCompatActivity() {
     private val weatherViewModel: TempsViewModel by viewModels { TempsViewModelFactory() }

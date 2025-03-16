@@ -19,7 +19,7 @@ interface MovieDbEndPoints {
     suspend fun newMovie(@Body movie: Movie): Response<ResponseBody>
 
     @DELETE("movies/{id}")
-    suspend fun delateMovie(@Path("id") id: Long)
+    suspend fun deleteMovie(@Path("id") id: Long)
 
     @PUT("movies/{id}")
     suspend fun updateMovie(
