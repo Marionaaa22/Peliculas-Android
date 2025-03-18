@@ -10,18 +10,19 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.mariona.act_pelis_favoritas.MovieDetailsActivity
 import com.mariona.act_pelis_favoritas.R
-import com.mariona.act_pelis_favoritas.models.Movie
+import com.mariona.act_pelis_favoritas.databinding.ActivityMovieItemBinding
+import com.mariona.act_pelis_favoritas.models.Movies
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class movieAdapter (var movies: List<Movie> = emptyList(),
+class movieAdapter (var movies: List<Movies> = emptyList(),
                     private val mContext: Context,
-                    private val onMovieClicked: (Movie) -> Unit,
-                    private val onUpdateClicked: (Movie) -> Unit,
-                    private val onDeleteClicked: (Movie) -> Unit,
+                    private val onMovieClicked: (Movies) -> Unit,
+                    private val onUpdateClicked: (Movies) -> Unit,
+                    private val onDeleteClicked: (Movies) -> Unit,
     ):
     RecyclerView.Adapter<movieAdapter.ViewHolder>() {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val layoutInflater = LayoutInflater.from(parent.context)
         return ViewHolder(layoutInflater.inflate(R.layout.activity_movie_item, parent, false), mContext)
     }
@@ -34,11 +35,11 @@ class movieAdapter (var movies: List<Movie> = emptyList(),
             onMovieClicked(movie)
         }
 
-        val binding = MovieDetailsActivity.bind(holder.itemView)
-        binding.pointsUpdate.setOnClickListener {
+        val binding = ActivityMovieItemBinding.bind(holder.itemView)
+        binding.editScore.setOnClickListener {
             onUpdateClicked(movie)
         }
-        binding.movieDelete.setOnClickListener {
+        binding.delete.setOnClickListener {
             onDeleteClicked(movie)
         }
     }
@@ -47,11 +48,11 @@ class movieAdapter (var movies: List<Movie> = emptyList(),
 
     class ViewHolder(val view: View, private val mContext: Context): RecyclerView.ViewHolder(view){
 
-        private val binding = MovieDetailsActivity.bind(view)
+        private val binding = ActivityMovieItemBinding.bind(view)
 
-        fun bind(movie: Movie){
+        fun bind(movie: Movies){
             binding.movieTitle.text = movie.title
-            val formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy")
+            val formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
             val date = LocalDate.parse(movie.releaseDate, formatter)
             binding.movieYear.text = date.year.toString()
             binding.movieScore.text = movie.myScore.toString()
@@ -62,7 +63,7 @@ class movieAdapter (var movies: List<Movie> = emptyList(),
             circularProgressDrawable.start()
 
             val requestOption = RequestOptions()
-                .circleCrop()
+                //.circleCrop()
                 .placeholder(circularProgressDrawable)
 
             Glide.with(binding.movieImage)

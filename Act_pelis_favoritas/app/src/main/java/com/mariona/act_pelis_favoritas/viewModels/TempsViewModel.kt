@@ -20,11 +20,11 @@ class TempsViewModel : ViewModel() {
     private val _city = MutableLiveData<List<Conf>?>()
     private val _error = MutableLiveData<String>()
 
-    init {
-        getCity()
-    }
+//    init {
+//        getCity()
+//    }
 
-    private fun getCity() {
+    /*private fun getCity() {
         viewModelScope.launch {
             try {
                 _loading.value = true
@@ -49,7 +49,7 @@ class TempsViewModel : ViewModel() {
             }
             _loading.value = false
         }
-    }
+    }*/
 
     private fun getTemps(city: String) {
         viewModelScope.launch {

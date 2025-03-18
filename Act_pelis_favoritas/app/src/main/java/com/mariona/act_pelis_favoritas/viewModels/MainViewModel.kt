@@ -6,7 +6,8 @@ import android.text.InputType
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.*
-import com.mariona.act_pelis_favoritas.models.Movie
+import com.mariona.act_pelis_favoritas.MovieDetailsActivity
+import com.mariona.act_pelis_favoritas.models.Movies
 import com.mariona.act_pelis_favoritas.retrofit.MovieDbConnection
 import kotlinx.coroutines.launch
 import java.io.IOException
@@ -21,8 +22,8 @@ class MainViewModel : ViewModel() {
     private val _moviesListLoading = MutableLiveData(false)
     val moviesListLoading: LiveData<Boolean> get() = _moviesListLoading
 
-    private val _movies = MutableLiveData<List<Movie>>(emptyList())
-    val movies: LiveData<List<Movie>> get() = _movies
+    private val _movies = MutableLiveData<List<Movies>>(emptyList())
+    val movies: LiveData<List<Movies>> get() = _movies
 
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> get() = _error
@@ -66,14 +67,14 @@ class MainViewModel : ViewModel() {
         _movies.value = _movies.value?.filter { it.favorite }
     }
 
-    fun onMovieClicked(movie: Movie, context: Context) {
+    fun onMovieClicked(movie: Movies, context: Context) {
         val intent = Intent(context, MovieDetailsActivity::class.java).apply {
             putExtra("movie", movie)
         }
         context.startActivity(intent)
     }
 
-    fun onMovieUpdated(movie: Movie, context: Context) {
+    fun onMovieUpdated(movie: Movies, context: Context) {
         val input = EditText(context).apply {
             inputType = InputType.TYPE_CLASS_NUMBER
         }
@@ -83,17 +84,16 @@ class MainViewModel : ViewModel() {
             setMessage("Escribe la nueva puntuación")
             setView(input)
             setPositiveButton("Aceptar") { _, _ ->
-                val points = input.text.toString().toIntOrNull()
+                var points = input.text.toString().toIntOrNull()
                 if (points in 1..10) {
-                    movie.myScore = points
+                    movie.myScore = points!!.toLong()
                     viewModelScope.launch {
                         try {
-                            val response = MovieDbConnection.service.updateMovie(movie.id, movie)
-                            if (response.isSuccessful) {
-                                loadMovies()
-                            } else {
-                                _error.value = "Error al actualizar: ${response.code()}"
-                            }
+
+                           MovieDbConnection.service.updateMovie(movie.id, movie)
+
+                            loadMovies()
+
                         } catch (e: Exception) {
                             _error.value = "Error de red: ${e.message}"
                         }
@@ -107,19 +107,18 @@ class MainViewModel : ViewModel() {
         }
     }
 
-    fun onMovieDeleted(movie: Movie, context: Context) {
+    fun onMovieDeleted(movie: Movies, context: Context) {
         AlertDialog.Builder(context).apply {
             setTitle("Eliminar película")
             setMessage("¿Estás seguro de que deseas eliminar esta película?")
             setPositiveButton("Sí") { dialog, _ ->
                 viewModelScope.launch {
                     try {
-                        val response = MovieDbConnection.service.deleteMovie(movie.id)
-                        if (response.isSuccessful) {
-                            loadMovies()
-                        } else {
-                            _error.value = "Error al eliminar: ${response.code()}"
-                        }
+
+                        MovieDbConnection.service.deleteMovie(movie.id)
+
+                        loadMovies()
+
                     } catch (e: Exception) {
                         _error.value = "Error de red: ${e.message}"
                     }

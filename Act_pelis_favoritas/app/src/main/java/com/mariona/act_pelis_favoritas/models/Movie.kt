@@ -4,7 +4,7 @@ import com.google.android.material.color.utilities.Score
 import com.google.gson.annotations.SerializedName
 import java.io.Serializable
 
-data class Movie (
+data class Movies (
 
     val adult: Boolean,
 
@@ -43,7 +43,7 @@ data class Movie (
     val voteCount: Long,
 
     @SerializedName("my_score")
-    val myScore: Long,
+    var myScore: Long,
 
 ): Serializable
 

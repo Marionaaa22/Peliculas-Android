@@ -23,9 +23,9 @@ class MainActivity : AppCompatActivity() {
     private val moviesAdapter = movieAdapter(
         emptyList(),
         this,
-        { viewModel.onMovieClick(it, this) },
-        { viewModel.onDeleteMovie(it, this) },
-        { viewModel.onEditScore(it, this) }
+        { viewModel.onMovieClicked(it, this) },
+        { viewModel.onMovieDeleted(it, this) },
+        { viewModel.onMovieUpdated(it, this) }
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.Movies.adapter = moviesAdapter
+        binding.recyclerViewMovies.adapter = moviesAdapter
 
         viewModel.moviesListLoading.observe(this) { cargando ->
             binding.progressBar.visibility = if (cargando) View.VISIBLE else View.GONE

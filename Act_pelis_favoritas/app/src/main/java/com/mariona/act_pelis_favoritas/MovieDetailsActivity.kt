@@ -7,11 +7,11 @@ import androidx.swiperefreshlayout.widget.CircularProgressDrawable
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.mariona.act_pelis_favoritas.databinding.ActivityMovieDetailsBinding
-import com.mariona.act_pelis_favoritas.models.Movie
+import com.mariona.act_pelis_favoritas.models.Movies
 
 class MovieDetailsActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMovieDetailsBinding
-    private lateinit var movie: Movie
+    private lateinit var movie: Movies
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -20,26 +20,23 @@ class MovieDetailsActivity : AppCompatActivity() {
         binding = ActivityMovieDetailsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        supportActionBar?.hide() // Evita error si la barra de acción es null
+        supportActionBar?.hide()
 
-        movie = intent.getSerializableExtra("movie") as? Movie ?: return // Manejo seguro
+        movie = intent.getSerializableExtra("movie") as? Movies ?: return
 
-        binding.movieAdult.text = "Adult: ${movie.adult}"
-        binding.movieFavorite.text = "Favorite: ${movie.favorite}"
-        binding.movieGenere.text = "Genre: "
+        binding.titleTextView.text = "Title: ${movie.title ?: "Unknown"}"
+        binding.originalTitleTextView.text = "Original Title: ${movie.originalTitle ?: "N/A"}"
+        binding.releaseDateTextView.text = "Release Date: ${movie.releaseDate ?: "N/A"}"
+        binding.adultTextView.text = "Adult: ${if (movie.adult) "Yes" else "No"}"
+        binding.originalLanguageTextView.text = "Original Language: ${movie.originalLanguage ?: "N/A"}"
+        binding.overviewTextView.text = "Overview: ${movie.overview ?: "No description available"}"
+        binding.popularityTextView.text = "Popularity: ${movie.popularity}"
+        binding.voteAverageTextView.text = "Vote Average: ${movie.voteAverage}"
+        binding.voteCountTextView.text = "Vote Count: ${movie.voteCount}"
+        binding.myScoreTextView.text = "My Score: ${movie.myScore}"
+        binding.favoriteTextView.text = "Favorite: ${if (movie.favorite) "Yes" else "No"}"
 
-        movie.genreIDS.forEach { genreId ->
-            binding.movieGenereIds.append("$genreId, ") // Agrega los géneros correctamente
-        }
-
-        binding.movieOriginalLanguage.text = "Original Language: ${movie.originalLanguage}"
-        binding.movieTitle.text = "Original Title: ${movie.originalTitle}"
-        binding.movieOverview.text = "Overview: ${movie.overview}"
-        binding.moviePopularity.text = "Popularity: ${movie.popularity}"
-        binding.movieYear.text = "Release Date: ${movie.releaseDate}"
-        binding.movieVoteAverage.text = "Vote Average: ${movie.voteAverage}"
-        binding.movieVoteCount.text = "Vote Count: ${movie.voteCount}"
-        binding.moviePoints.text = "My Score: ${movie.myScore}"
+        binding.genreTextView.text = "Genre: " + movie.genreIDS.joinToString(", ")
 
         val circularProgressDrawable = CircularProgressDrawable(this).apply {
             strokeWidth = 5f
@@ -47,17 +44,11 @@ class MovieDetailsActivity : AppCompatActivity() {
             start()
         }
 
-        val requestOption = RequestOptions()
-            .circleCrop()
-            .placeholder(circularProgressDrawable)
-
         Glide.with(this)
             .load(movie.posterPath)
-            .apply(requestOption)
+            .apply(RequestOptions().placeholder(circularProgressDrawable))
             .into(binding.movieImage)
 
-        binding.backButton.setOnClickListener {
-            finish()
-        }
+        binding.backButton.setOnClickListener { finish() }
     }
 }
