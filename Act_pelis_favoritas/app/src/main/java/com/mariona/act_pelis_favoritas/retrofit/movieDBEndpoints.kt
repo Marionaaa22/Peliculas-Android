@@ -11,7 +11,7 @@ interface movieDBEndpoints {
     suspend fun searchMovies(
         @Query("query") query: String,
         @Query("lenguage") lenguage: String,
-        @Query("page") page: Int,
-        @Query("_sort") sort: String
+        @Query("_sort") sort: String,
+        @Query("page") page: Int
     ): Response<respostaMovieDB>
 }
