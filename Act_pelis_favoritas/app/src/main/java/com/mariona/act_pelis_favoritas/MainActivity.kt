@@ -24,8 +24,8 @@ class MainActivity : AppCompatActivity() {
         emptyList(),
         this,
         { viewModel.onMovieClicked(it, this) },
+        { viewModel.onMovieUpdated(it, this) },
         { viewModel.onMovieDeleted(it, this) },
-        { viewModel.onMovieUpdated(it, this) }
     )
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -86,7 +86,7 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             R.id.action_weather -> {
-                startActivity(Intent(this, WeatherActivity::class.java))
+                startActivity(Intent(this, weatherapiActivity::class.java))
                 true
             }
             R.id.action_add -> {

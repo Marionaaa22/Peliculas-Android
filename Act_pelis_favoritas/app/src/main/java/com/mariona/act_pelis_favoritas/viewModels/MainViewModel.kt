@@ -8,7 +8,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.*
 import com.mariona.act_pelis_favoritas.MovieDetailsActivity
 import com.mariona.act_pelis_favoritas.models.Movies
-import com.mariona.act_pelis_favoritas.retrofit.MovieDbConnection
+import com.mariona.act_pelis_favoritas.retrofit.Connection
 import kotlinx.coroutines.launch
 import java.io.IOException
 
@@ -39,10 +39,10 @@ class MainViewModel : ViewModel() {
 
             try {
                 val response = when {
-                    titleASC -> MovieDbConnection.service.listMovies("title", "asc")
-                    titleDESC -> MovieDbConnection.service.listMovies("title", "desc")
-                    myscoreASC -> MovieDbConnection.service.listMovies("my_score", "asc")
-                    myscoreDESC -> MovieDbConnection.service.listMovies("my_score", "desc")
+                    titleASC -> Connection.service.listMovies("title", "asc")
+                    titleDESC -> Connection.service.listMovies("title", "desc")
+                    myscoreASC -> Connection.service.listMovies("my_score", "asc")
+                    myscoreDESC -> Connection.service.listMovies("my_score", "desc")
                     else -> null
                 }
 
@@ -90,7 +90,7 @@ class MainViewModel : ViewModel() {
                     viewModelScope.launch {
                         try {
 
-                           MovieDbConnection.service.updateMovie(movie.id, movie)
+                           Connection.service.updateMovie(movie.id, movie)
 
                             loadMovies()
 
@@ -115,7 +115,7 @@ class MainViewModel : ViewModel() {
                 viewModelScope.launch {
                     try {
 
-                        MovieDbConnection.service.deleteMovie(movie.id)
+                        Connection.service.deleteMovie(movie.id)
 
                         loadMovies()
 

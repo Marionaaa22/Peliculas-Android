@@ -9,12 +9,12 @@
 
     <ImageView
         android:id="@+id/movieImage"
-        android:layout_width="409dp"
-        android:layout_height="329dp"
-        android:layout_marginTop="16dp"
+        android:layout_width="417dp"
+        android:layout_height="340dp"
+        android:layout_marginTop="4dp"
         android:scaleType="centerCrop"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 

@@ -9,14 +9,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.create
 import java.util.concurrent.TimeUnit
 
-object MovieDbConnection {
+object Connection {
 
     private const val TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlN2VlMmViYjBlZWZjMzg2OWRkYTk5OGJmNjYwZDBlNSIsIm5iZiI6MTc0MTM3MDAyNi40NzQsInN1YiI6IjY3Y2IzMmFhN2M5NjdlMDRkNTViODFkYyIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.exgP_rmpLGXCSx8RaYre9nszrjECdl_Aep4yjRzyxf4"
 
     private val authInterceptor = Interceptor { chain ->
         val originalRequest: Request = chain.request()
         val newRequest: Request = originalRequest.newBuilder()
-            .addHeader("Authorization", "Bearer $TOKEN") // 🔥 Afegim el token
+            .addHeader("Authorization", "Bearer $TOKEN") // Afegim el token
             .build()
         chain.proceed(newRequest)
     }
@@ -55,9 +55,17 @@ object MovieDbConnection {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    val service: MovieDbEndPoints = builder.create()
+    private val builderWeather = Retrofit.Builder()
+        .baseUrl("https://api.weatherapi.com/v1/")
+        .client(okHttpClient)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
 
-    val movieDBService:MovieDbEndPoints  = builderMovieDB.create()
+    val service: Endpoints = builder.create()
+
+    val movieDBService:movieDBEndpoints  = builderMovieDB.create()
+
+    val weatherService: weatherEndpoints = builderWeather.create()
 }
 
 

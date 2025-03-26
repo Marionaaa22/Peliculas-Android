@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.mariona.act_pelis_favoritas.models.Conf
 import com.mariona.act_pelis_favoritas.models.Temps
-import com.mariona.act_pelis_favoritas.retrofit.MovieDbConnection
 import com.mariona.act_pelis_favoritas.server.WeatherConnection
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch

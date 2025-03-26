@@ -1,15 +1,15 @@
 package com.mariona.act_pelis_favoritas.retrofit
 
+import com.mariona.act_pelis_favoritas.models.Conf
 import com.mariona.act_pelis_favoritas.models.Movies
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.*
 
-interface MovieDbEndPoints {
+interface Endpoints {
     @GET("movies")
     suspend fun listMovies(
-        @Query("_sort") sort: String,
-        @Query("_order") order: String
+        @Query("_sort") sort: String
     ): Response<List<Movies>>
 
     @POST("movies")
@@ -22,5 +22,11 @@ interface MovieDbEndPoints {
     suspend fun updateMovie(
         @Path("id") id: Long, @Body movie: Movies?
     )
+
+    @GET("conf")
+    suspend fun confWeather(): Response<List<Conf>>
+
+    @POST("conf/{id}")
+    suspend fun updateConf(@Path("id") id: String, @Body conf: Conf)
 
 }
