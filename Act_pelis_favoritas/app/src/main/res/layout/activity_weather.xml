@@ -239,6 +239,7 @@
         android:layout_width="102dp"
         android:layout_height="57dp"
         android:layout_marginBottom="32dp"
+        android:onClick="changeClick"
         android:text="Canviar"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

@@ -3,25 +3,30 @@ package com.mariona.act_pelis_favoritas
 import android.graphics.Color
 import android.os.Bundle
 import android.view.View
+import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.google.android.material.snackbar.Snackbar
 import com.mariona.act_pelis_favoritas.adapter.MovieDBAdapter
+import com.mariona.act_pelis_favoritas.databinding.ActivityMovieDbBinding
+import com.mariona.act_pelis_favoritas.models.MovieDBMovies
 import com.mariona.act_pelis_favoritas.viewModels.MovieDBViewModel
+import com.mariona.act_pelis_favoritas.viewModels.MovieDBViewModelFactory
 
 class movie_Db : AppCompatActivity() {
     private val viewModel: MovieDBViewModel by viewModels { MovieDBViewModelFactory() }
-    private lateinit var binding: ActivityMovieDbactivityBinding
-    private val movieDBAdapter = MovieDBAdapter(emptyList(), this, {viewModel.addFavoriteMovie(it, this)})
+    private lateinit var binding: ActivityMovieDbBinding
+    private val movieDBAdapter = MovieDBAdapter(emptyList(), this, {addFavoriteMovie(it)})
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
 
         supportActionBar!!.hide()
 
-        binding = ActivityMovieDbactivityBinding.inflate(layoutInflater)
+        binding = ActivityMovieDbBinding.inflate(layoutInflater)
         val view = binding.root
         setContentView(view)
 
@@ -57,6 +62,11 @@ class movie_Db : AppCompatActivity() {
                 snackbar.show()
             }
         }
+    }
+
+    fun addFavoriteMovie(movieDBMovies: MovieDBMovies){
+        viewModel.addFavorite(movieDBMovies, this)
+
     }
 
     fun searchMovie(view: View) {
