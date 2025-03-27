@@ -39,10 +39,10 @@ class MainViewModel : ViewModel() {
 
             try {
                 val response = when {
-                    titleASC -> Connection.service.listMovies("title", "asc")
-                    titleDESC -> Connection.service.listMovies("title", "desc")
-                    myscoreASC -> Connection.service.listMovies("my_score", "asc")
-                    myscoreDESC -> Connection.service.listMovies("my_score", "desc")
+                    titleASC -> Connection.service.listMovies("title")
+                    titleDESC -> Connection.service.listMovies("-title")
+                    myscoreASC -> Connection.service.listMovies("my_score")
+                    myscoreDESC -> Connection.service.listMovies("-my_score")
                     else -> null
                 }
 

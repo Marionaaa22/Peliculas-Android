@@ -46,7 +46,7 @@
         android:id="@+id/textQuery"
         android:layout_width="256dp"
         android:layout_height="49dp"
-        android:layout_marginBottom="20dp"
+        android:layout_marginBottom="60dp"
         app:layout_constraintBottom_toTopOf="@+id/Movies"
-        tools:layout_editor_absoluteX="21dp" />
+        tools:layout_editor_absoluteX="31dp" />
 </androidx.constraintlayout.widget.ConstraintLayout>

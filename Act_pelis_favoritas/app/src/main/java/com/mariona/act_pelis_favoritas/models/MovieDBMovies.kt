@@ -43,7 +43,7 @@ data class MovieDBMovies(
 ) : Serializable
 
 data class respostaMovieDB(
-    val page: Long,
+    val page: Int,
     val results: List<MovieDBMovies>,
     val total_pages: Int,
     val total_results: Int
