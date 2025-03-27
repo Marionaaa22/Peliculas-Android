@@ -25,10 +25,10 @@
                 android:title="Z-A" />
             <item
                 android:id="@+id/action_sort_rating_asc"
-                android:title="Mejor puntuación" />
+                android:title="Peor puntuación" />
             <item
                 android:id="@+id/action_sort_rating_desc"
-                android:title="Peor puntuación" />
+                android:title="Mejor puntuación" />
         </menu>
     </item>
 </menu>

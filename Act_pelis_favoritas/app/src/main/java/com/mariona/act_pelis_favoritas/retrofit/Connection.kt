@@ -16,7 +16,7 @@ object Connection {
     private val authInterceptor = Interceptor { chain ->
         val originalRequest: Request = chain.request()
         val newRequest: Request = originalRequest.newBuilder()
-            .addHeader("Authorization", "Bearer $TOKEN") // Afegim el token
+            .addHeader("Authorization", "Bearer $TOKEN")
             .build()
         chain.proceed(newRequest)
     }
@@ -25,23 +25,18 @@ object Connection {
         level = HttpLoggingInterceptor.Level.BODY
     }
 
-    private val okHttpClient = HttpLoggingInterceptor().run {
-        level = HttpLoggingInterceptor.Level.BODY
-        OkHttpClient.Builder()
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .addInterceptor(this).build()
+    private val okHttpClient = OkHttpClient.Builder()
+        .connectTimeout(10, TimeUnit.SECONDS)
+        .readTimeout(10, TimeUnit.SECONDS)
+        .addInterceptor(loggingInterceptor)
+        .build()
 
-    }
-
-    private val okHttpClientMovieDB = HttpLoggingInterceptor().run {
-        level = HttpLoggingInterceptor.Level.BODY
-        OkHttpClient.Builder()
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .addInterceptor(authInterceptor)
-            .addInterceptor(loggingInterceptor)
-            .addInterceptor(this).build()
-
-    }
+    private val okHttpClientMovieDB = OkHttpClient.Builder()
+        .connectTimeout(10, TimeUnit.SECONDS)
+        .readTimeout(10, TimeUnit.SECONDS)
+        .addInterceptor(authInterceptor)
+        .addInterceptor(loggingInterceptor)
+        .build()
 
     private val builder = Retrofit.Builder()
         .baseUrl("http://10.0.2.2:3000/")
@@ -61,11 +56,11 @@ object Connection {
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
-    val service: Endpoints = builder.create()
+    val service: Endpoints = builder.create(Endpoints::class.java)
 
-    val movieDBService:movieDBEndpoints  = builderMovieDB.create()
+    val movieDBService: movieDBEndpoints = builderMovieDB.create(movieDBEndpoints::class.java)
 
-    val weatherService: weatherEndpoints = builderWeather.create()
+    val weatherService: weatherEndpoints = builderWeather.create(weatherEndpoints::class.java)
 }
 
 

@@ -32,7 +32,7 @@
         28
       ],
       "id": "76600",
-      "my_score": 7,
+      "my_score": 9,
       "original_language": "en",
       "overview": "Set more than a decade after the events of the first film, learn the story of the Sully family (Jake, Neytiri, and their kids), the trouble that follows them, the lengths they go to keep each other safe, the battles they fight to stay alive, and the tragedies they endure.",
       "popularity": 2598.476,
@@ -53,8 +53,8 @@
         18
       ],
       "id": "653851",
+      "my_score": 7,
       "original_language": "en",
-      "original_title": "Devotion",
       "overview": "The harrowing true story of two elite US Navy fighter pilots during the Korean War. Their heroic sacrifices would ultimately make them the Navy's most celebrated wingmen.",
       "popularity": 2106.727,
       "poster_path": "https://image.tmdb.org/t/p/original/26yQPXymbWeCLKwcmyL8dRjAzth.jpg",
@@ -62,8 +62,7 @@
       "title": "Devotion",
       "video": false,
       "vote_average": 7.6,
-      "vote_count": 166,
-      "my_score": 5
+      "vote_count": 166
     },
     {
       "adult": false,
