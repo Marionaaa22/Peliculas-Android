@@ -9,6 +9,7 @@ import androidx.lifecycle.*
 import com.mariona.act_pelis_favoritas.MovieDetailsActivity
 import com.mariona.act_pelis_favoritas.models.Movies
 import com.mariona.act_pelis_favoritas.retrofit.Connection
+import com.mariona.act_pelis_favoritas.weatherapiActivity
 import kotlinx.coroutines.launch
 import java.io.IOException
 
@@ -59,6 +60,20 @@ class MainViewModel : ViewModel() {
                 _error.value = "Unknown error: ${e.message}"
             } finally {
                 _moviesListLoading.value = false
+            }
+        }
+    }
+
+    fun weatherOpen(context: Context) {
+        viewModelScope.launch {
+            _error.value = null
+            var resposta = Connection.service.confWeather()
+            if (resposta.isSuccessful) {
+                var city = resposta.body()
+                val i = Intent(context, weatherapiActivity::class.java)
+                i.putExtra("city", city!![0].city)
+                i.putExtra("cityID", city[0].id)
+                context.startActivity(i)
             }
         }
     }

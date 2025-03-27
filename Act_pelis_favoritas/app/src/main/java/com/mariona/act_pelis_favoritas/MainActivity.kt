@@ -86,11 +86,11 @@ class MainActivity : AppCompatActivity() {
                 true
             }
             R.id.action_weather -> {
-                startActivity(Intent(this, weatherapiActivity::class.java))
+                viewModel.weatherOpen(this)
                 true
             }
             R.id.action_add -> {
-                // Implementar funcionalidad de agregar película
+                startActivity(Intent(this, movie_Db::class.java))
                 true
             }
             else -> super.onOptionsItemSelected(item)

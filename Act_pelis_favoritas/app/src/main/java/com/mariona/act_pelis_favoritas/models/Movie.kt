@@ -48,5 +48,6 @@ data class Movies (
 ): Serializable
 
 data class Conf (
+    val id: String,
     val city: String
 )

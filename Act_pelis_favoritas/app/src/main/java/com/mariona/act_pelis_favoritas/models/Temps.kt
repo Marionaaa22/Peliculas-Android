@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName
 import java.util.concurrent.locks.Condition
 
 data class Temps(
-    val location: Location,
+    val location: Localizacion,
     val current: Current
 )
 
@@ -27,7 +27,7 @@ data class Current (
     @SerializedName("is_day")
     val isDay: Long,
 
-    val condition: Condition,
+    val condition: Condicion,
 
     @SerializedName("wind_mph")
     val windMph: Double,
@@ -96,14 +96,14 @@ data class Current (
     val gustKph: Double
 ): Serializable
 
-data class Condition (
+data class Condicion (
     val text: String,
     val icon: String,
     val code: Int
 
 ): Serializable
 
-data class Location (
+data class Localizacion (
     val name: String,
     val region: String,
     val country: String,

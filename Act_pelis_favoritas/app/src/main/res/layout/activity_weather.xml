@@ -50,16 +50,16 @@
             android:orientation="horizontal">
 
             <TextView
-                android:id="@+id/localizacion"
+                android:id="@+id/ciutat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Localitzación: "
+                android:text="Ciudad: "
                 android:textColor="@android:color/black"
                 android:textSize="15sp"
                 android:textStyle="bold" />
 
             <TextView
-                android:id="@+id/tvLocalizacion"
+                android:id="@+id/tvCiutat"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="TextView"
@@ -92,52 +92,8 @@
         </LinearLayout>
 
         <!-- Description Info -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/descripcio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Descripción: "
-                android:textColor="@android:color/black"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvDescripcio"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textColor="@android:color/black"
-                android:textSize="15sp" />
-        </LinearLayout>
 
         <!-- City Info -->
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
-
-            <TextView
-                android:id="@+id/ciutat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Ciudad: "
-                android:textColor="@android:color/black"
-                android:textSize="15sp"
-                android:textStyle="bold" />
-
-            <TextView
-                android:id="@+id/tvCiutat"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="TextView"
-                android:textColor="@android:color/black"
-                android:textSize="15sp" />
-        </LinearLayout>
 
         <!-- Latitude Info -->
         <LinearLayout
@@ -259,4 +215,43 @@
                 android:textSize="15sp" />
         </LinearLayout>
     </LinearLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:layout_width="409dp"
+        android:layout_height="wrap_content"
+        tools:layout_editor_absoluteX="1dp"
+        tools:layout_editor_absoluteY="568dp">
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputEditText
+        android:id="@+id/newCity"
+        android:layout_width="418dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="53dp"
+        android:layout_marginBottom="27dp"
+        app:layout_constraintBottom_toTopOf="@+id/canviar"
+        app:layout_constraintTop_toBottomOf="@+id/weatherInfoLayout"
+        tools:layout_editor_absoluteX="-7dp" />
+
+    <Button
+        android:id="@+id/canviar"
+        android:layout_width="102dp"
+        android:layout_height="57dp"
+        android:layout_marginBottom="32dp"
+        android:text="Canviar"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.498"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ProgressBar
+        android:id="@+id/progressWeather"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

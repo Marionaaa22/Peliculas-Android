@@ -27,6 +27,7 @@ interface Endpoints {
     suspend fun confWeather(): Response<List<Conf>>
 
     @POST("conf/{id}")
-    suspend fun updateConf(@Path("id") id: String, @Body conf: Conf)
+    suspend fun updateConfWeather(@Path("id") id: String, @Body conf: Conf)
+
 
 }
